@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<!-- saved from url=(0065)file:///C:/Users/Victoria/Downloads/wizard_trees_dashboard_4.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wizard Trees — Ops &amp; COGS Dashboard</title>
+<script src="./Wizard Trees — Ops &amp; COGS Dashboard_files/chart.umd.js.download"></script>
+<style>
+:root{--black:#0f0f0f;--offwhite:#f5f3ef;--green:#1a6b3c;--gl:#d4ead9;--gm:#2d9457;--gp:#84c9a0;--amber:#b85c00;--al:#fdf0e0;--teal:#0e7490;--muted:#666;--border:#e0ddd8;--card:#fff;--page:#f5f3ef}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--page);color:var(--black);font-family:-apple-system,'Helvetica Neue',Arial,sans-serif;font-size:14px;line-height:1.5}
+
+header{background:var(--black);color:var(--offwhite);padding:24px 40px 20px;display:flex;align-items:flex-end;justify-content:space-between;gap:20px}
+.hl h1{font-family:'Georgia',serif;font-size:26px;font-weight:normal;letter-spacing:-.5px;line-height:1.1}
+.hl h1 span{color:var(--gm)}
+.hl p{margin-top:5px;font-size:11px;color:rgba(245,243,239,.45);letter-spacing:.04em;text-transform:uppercase}
+.hr{text-align:right;font-size:11px;color:rgba(245,243,239,.35)}
+.hr strong{display:block;font-size:20px;font-family:'Georgia',serif;color:var(--offwhite);font-weight:normal}
+
+.tl-bar{background:var(--black);border-top:1px solid rgba(255,255,255,.07);padding:0 40px;display:flex}
+.tl-step{flex:1;padding:9px 0;border-right:1px solid rgba(255,255,255,.07);text-align:center}
+.tl-step:last-child{border-right:none}
+.tl-step .d{font-size:10px;font-weight:600;color:rgba(245,243,239,.4);letter-spacing:.05em;text-transform:uppercase}
+.tl-step .e{font-size:10px;color:rgba(245,243,239,.25);margin-top:2px}
+.tl-step.on .d{color:var(--gm)}
+.tl-step.on .e{color:rgba(245,243,239,.5)}
+
+.nav{display:flex;background:var(--black);border-bottom:1px solid rgba(255,255,255,.08);padding:0 40px}
+.nav-tab{padding:10px 18px;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:rgba(245,243,239,.4);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.nav-tab:hover{color:rgba(245,243,239,.7)}
+.nav-tab.active{color:var(--gm);border-bottom-color:var(--gm)}
+
+.view{display:none;padding:28px 40px 60px;max-width:1200px;margin:0 auto}
+.view.active{display:block}
+
+/* MONTH GRID */
+.month-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:24px}
+.month-btn{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:14px 12px;cursor:pointer;text-align:left;transition:all .15s;position:relative}
+.month-btn:hover{border-color:var(--gm);box-shadow:0 2px 8px rgba(26,107,60,.12)}
+.month-btn.active-month{background:var(--black);border-color:var(--black)}
+.month-btn.active-month .mb-val,.month-btn.active-month .mb-label,.month-btn.active-month .mb-sub{color:rgba(245,243,239,.9)}
+.month-btn.active-month .mb-sub{color:rgba(245,243,239,.5)}
+.month-btn.pre-tenure{border-style:dashed;background:#fafaf8}
+.mb-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.mb-val{font-family:'Georgia',serif;font-size:20px;color:var(--black);line-height:1.1}
+.mb-sub{font-size:10px;color:var(--muted);margin-top:3px}
+.mb-cplb{font-size:11px;font-weight:700;color:var(--green);margin-top:4px}
+.mb-badge{display:inline-block;font-size:8px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:1px 6px;border-radius:20px;position:absolute;top:8px;right:8px}
+.mbb-g{background:var(--gl);color:var(--green)}.mbb-a{background:var(--al);color:var(--amber)}.mbb-d{background:#f0f0f0;color:#888}
+
+/* MONTH DETAIL */
+.month-detail{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:24px;margin-bottom:28px;display:none}
+.month-detail.show{display:block}
+.md-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.md-title{font-family:'Georgia',serif;font-size:22px;font-weight:normal}
+.md-close{background:none;border:1px solid var(--border);border-radius:6px;padding:4px 12px;cursor:pointer;font-size:12px;color:var(--muted)}
+.md-close:hover{background:var(--page)}
+.md-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.md-stat{background:var(--page);border-radius:6px;padding:12px 14px}
+.md-stat .ms-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:500}
+.md-stat .ms-v{font-family:'Georgia',serif;font-size:22px;font-weight:normal;margin:3px 0 2px;letter-spacing:-.3px}
+.md-stat .ms-s{font-size:11px;color:var(--muted)}
+.md-stat.inv{background:var(--black)}
+.md-stat.inv .ms-l{color:rgba(245,243,239,.4)}
+.md-stat.inv .ms-v{color:var(--offwhite)}
+.md-stat.inv .ms-s{color:var(--gm)}
+.md-section{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:16px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.md-row{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:var(--page);border-radius:6px;margin-bottom:6px;font-size:12.5px}
+.md-row .mr-label{font-weight:500}
+.md-row .mr-sub{font-size:11px;color:var(--muted)}
+.md-row .mr-val{font-weight:700;color:var(--green)}
+.no-labor{background:var(--al);border:1px solid #f0c080;border-radius:6px;padding:10px 14px;font-size:12px;color:#7a3c00;margin-top:12px}
+.cplb-compare{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.cplb-box{border-radius:6px;padding:12px 14px;text-align:center}
+.cplb-box .cb-label{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+.cplb-box .cb-val{font-family:'Georgia',serif;font-size:24px;font-weight:normal;letter-spacing:-.3px}
+.cplb-box .cb-sub{font-size:11px;color:var(--muted);margin-top:3px}
+.cplb-rec{background:var(--gl)}
+.cplb-rec .cb-val{color:var(--green)}
+.cplb-void{background:#f5f5f5}
+.cplb-void .cb-val{color:#555}
+
+/* LAYOUT */
+section{margin-bottom:36px}
+.sl{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.sl::after{content:'';flex:1;height:1px;background:var(--border)}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px 18px}
+.sc .lb{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600;text-align:center}
+.sc .vl{font-family:'Georgia',serif;font-size:38px;font-weight:700;letter-spacing:-.5px;line-height:1.1;margin:8px 0 5px;text-align:center}
+.sc .sb{font-size:12px;font-weight:600;text-align:center}
+.sc.inv{background:var(--black);border-color:var(--black)}
+.sc.inv .lb{color:rgba(245,243,239,.4)}
+.sc.inv .vl{color:var(--offwhite)}
+.sc.inv .sb{color:var(--gm)}
+.up{color:var(--green)}.nt{color:var(--muted)}.fl{color:var(--amber)}
+.cc{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:18px}
+.cc h3{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.cc .cs{font-size:11.5px;color:var(--muted);margin-bottom:12px}
+.cw{position:relative;width:100%}
+.leg{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:8px;font-size:11px;color:var(--muted)}
+.leg span{display:flex;align-items:center;gap:4px}
+.ld{width:8px;height:8px;border-radius:2px;display:inline-block;flex-shrink:0}
+
+.tw{background:var(--card);border:1px solid var(--border);border-radius:8px;overflow:hidden}
+table.dt{width:100%;border-collapse:collapse;font-size:12px}
+table.dt thead th{background:var(--black);color:rgba(245,243,239,.6);font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:9px 13px;text-align:right;white-space:nowrap}
+table.dt thead th:first-child{text-align:left}
+table.dt tbody td{padding:8px 13px;border-bottom:1px solid var(--border);text-align:right}
+table.dt tbody td:first-child{text-align:left;font-weight:500}
+table.dt tbody tr:last-child td{border-bottom:none}
+table.dt tbody tr:hover td{background:#f9f8f6}
+table.dt tr.tot td{background:#f2f0ec;font-weight:700;border-top:2px solid var(--border)}
+.win{color:var(--green);font-weight:700}.flag{color:var(--amber);font-weight:600}
+.badge{display:inline-block;font-size:8px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:1px 6px;border-radius:20px;vertical-align:middle;margin-left:4px}
+.bg{background:var(--gl);color:var(--green)}.ba{background:var(--al);color:var(--amber)}.bd{background:#f0f0f0;color:#777}
+
+table.ct{width:100%;border-collapse:collapse;font-size:12px}
+table.ct th{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:8px 12px;border-bottom:2px solid var(--border);text-align:right;background:#faf9f7}
+table.ct th:first-child{text-align:left}
+table.ct td{padding:8px 12px;border-bottom:1px solid var(--border);text-align:right}
+table.ct td:first-child{text-align:left;color:var(--muted)}
+table.ct tr.ctot td{font-weight:700;border-top:2px solid var(--black);background:var(--black);color:var(--offwhite)}
+table.ct tr.ctot td:first-child{color:rgba(245,243,239,.6)}
+table.ct tr.cmar td{background:var(--gl);color:var(--green);font-weight:700;border-bottom:none}
+table.ct tr.cmar td:first-child{color:var(--green)}
+.cwin{color:var(--green);font-weight:700}
+
+.fn{font-size:11px;color:var(--muted);font-style:italic;padding:8px 13px}
+.highlight-box{background:var(--gl);border:1px solid #a8d4b0;border-radius:8px;padding:14px 18px;margin-bottom:20px}
+.highlight-box strong{color:var(--green);font-size:15px}
+.highlight-box p{font-size:12.5px;color:#2a5c38;margin-top:4px}
+
+footer{background:var(--black);color:rgba(245,243,239,.3);font-size:11px;padding:14px 40px;display:flex;justify-content:space-between}
+@media(max-width:800px){header,.tl-bar,.nav{padding-left:20px;padding-right:20px}.view{padding:20px}.g4,.month-grid{grid-template-columns:1fr 1fr}.g2{grid-template-columns:1fr}.md-stats{grid-template-columns:1fr 1fr}footer{flex-direction:column;gap:4px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hl">
+    <h1>Wizard Trees<br><span>Ops &amp; COGS Dashboard</span></h1>
+    <p>Victoria &nbsp;·&nbsp; Director of Operations &nbsp;·&nbsp; Last updated Jun 25, 2026</p>
+  </div>
+  <div class="hr">
+    <strong>$1.042M</strong>
+    Net revenue Feb–Jun 2026
+  </div>
+</header>
+
+<div class="tl-bar">
+  <div class="tl-step"><div class="d">Jul–Oct '25</div><div class="e">Roger packaging</div></div>
+  <div class="tl-step on"><div class="d">Nov 2025</div><div class="e">You took over ops</div></div>
+  <div class="tl-step"><div class="d">Dec–Jan</div><div class="e">Ops ramp-up</div></div>
+  <div class="tl-step"><div class="d">Feb 2026</div><div class="e">Labor tracking starts</div></div>
+  <div class="tl-step on"><div class="d">Mar 2026</div><div class="e">You took over sales</div></div>
+  <div class="tl-step"><div class="d">Jun 2026</div><div class="e">Current</div></div>
+</div>
+
+<div class="nav">
+  <div class="nav-tab" onclick="showView(&#39;overview&#39;,this)">Overview</div>
+  <div class="nav-tab active" onclick="showView(&#39;monthly&#39;,this)">Monthly Detail</div>
+  <div class="nav-tab" onclick="showView(&#39;cogs&#39;,this)">COGS &amp; Supply Costs</div>
+</div>
+
+<!-- ══ OVERVIEW ══ -->
+<div class="view" id="view-overview">
+
+  <div class="highlight-box">
+    <strong>REC cost per lb: $115.32 (Dec '25) → $47.94 (May '26) — 58% reduction in 6 months</strong>
+    <p>Source: Gianni's Filifera cost tracker · REC orders only (Nabis + Distru) · Void/portal excluded</p>
+  </div>
+
+  <section>
+    <div class="sl">revenue — Feb through Jun 2026</div>
+    <div class="g4">
+      <div class="sc inv"><div class="lb">Combined gross (Feb–Jun)</div><div class="vl">$1.097M</div><div class="sb">Nabis $542K + Distru $555K</div></div>
+      <div class="sc"><div class="lb">Best month — May gross</div><div class="vl">$302K</div><div class="sb up">↑ 44% vs Feb ($210K)</div></div>
+      <div class="sc"><div class="lb">Vape revenue (Apr–Jun)</div><div class="vl">$62.6K</div><div class="sb nt">Nabis only · no in-house packaging</div></div>
+      <div class="sc"><div class="lb">Net revenue (Feb–Jun)</div><div class="vl">$1.042M</div><div class="sb nt">Nabis −10% + full Distru</div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sl">REC cost per lb — Gianni's tracker (rec only, void excluded)</div>
+    <div class="g4" style="margin-bottom:14px">
+      <div class="sc inv"><div class="lb">Dec '25 baseline</div><div class="vl">$115</div><div class="sb">First month tracked</div></div>
+      <div class="sc"><div class="lb">May '26 — best month</div><div class="vl">$47.94</div><div class="sb up">↓ 58% from Dec baseline</div></div>
+      <div class="sc"><div class="lb">REC lbs — May '26</div><div class="vl">184.7 lbs</div><div class="sb up">↑ 86% vs Dec (99.1 lbs)</div></div>
+      <div class="sc"><div class="lb">REC labor — May '26</div><div class="vl">$8,857</div><div class="sb up">↓ 22% vs Dec ($11,428)</div></div>
+    </div>
+    <div class="g2">
+      <div class="cc">
+        <h3>REC cost per lb — monthly trend</h3>
+        <div class="cs">Gianni's tracker · actual pay ÷ rec lbs only</div>
+        <div class="leg">
+          <span><span class="ld" style="background:#1a6b3c"></span>REC cost/lb</span>
+          <span><span class="ld" style="background:#84c9a0"></span>VOID cost/lb (excluded from ops metric)</span>
+        </div>
+        <div class="cw" style="height:230px"><canvas id="cplbGianni" width="514" height="230" style="display: block; box-sizing: border-box; height: 230px; width: 514px;"></canvas></div>
+      </div>
+      <div class="cc">
+        <h3>REC lbs packaged vs labor cost</h3>
+        <div class="cs">More lbs, less cost — the efficiency story</div>
+        <div class="leg">
+          <span><span class="ld" style="background:#1a6b3c"></span>REC lbs</span>
+          <span><span class="ld" style="background:#e8a87c"></span>Labor cost ($)</span>
+        </div>
+        <div class="cw" style="height:230px"><canvas id="lbsVsLabor" width="514" height="230" style="display: block; box-sizing: border-box; height: 230px; width: 514px;"></canvas></div>
+      </div>
+    </div>
+
+    <div class="tw">
+      <table class="dt">
+        <thead><tr><th>Month</th><th>REC lbs</th><th>REC labor $</th><th>REC $/lb</th><th>VOID lbs</th><th>VOID labor $</th><th>VOID $/lb</th><th>Total labor</th><th>Net revenue</th><th>Labor % rev</th></tr></thead>
+        <tbody>
+          <tr><td>Dec 2025</td><td>99.1</td><td>$11,428</td><td class="flag">$115.32</td><td>37.5</td><td>$4,158</td><td>$110.89</td><td>$15,586</td><td>—</td><td>—</td></tr>
+          <tr><td>Jan 2026</td><td>119.4</td><td>$11,249</td><td class="flag">$94.21</td><td>46.4</td><td>$3,820</td><td>$82.38</td><td>$15,069</td><td>—</td><td>—</td></tr>
+          <tr><td>Feb 2026</td><td>127.6</td><td>$9,925</td><td>$77.80</td><td>6.9</td><td>$480</td><td>$69.46</td><td>$10,405</td><td>$198,647</td><td>5.2%</td></tr>
+          <tr><td>Mar 2026</td><td>148.2</td><td>$14,010</td><td>$94.52</td><td>6.9</td><td>$730</td><td>$105.68</td><td>$14,740</td><td>$177,477</td><td>8.3%</td></tr>
+          <tr><td>Apr 2026</td><td>150.8</td><td>$10,495</td><td>$69.62</td><td>8.9</td><td>$603</td><td>$67.92</td><td>$11,098</td><td>$280,761</td><td>4.0%</td></tr>
+          <tr><td>May 2026</td><td class="win">184.7</td><td>$8,857</td><td class="win">$47.94</td><td>8.9</td><td>$410</td><td>$46.17</td><td>$9,267</td><td class="win">$283,980</td><td class="win">3.3%</td></tr>
+          <tr class="tot"><td>Total / avg</td><td>830 lbs</td><td>$65,964</td><td>$79.47 avg</td><td>115 lbs</td><td>$10,201</td><td>$80.35 avg</td><td>$76,165</td><td>$941,K</td><td>5.2% avg</td></tr>
+        </tbody>
+      </table>
+      <p class="fn">Source: Gianni's Filifera cost tracker · REC = Nabis + Distru orders only · VOID = portal/internal orders excluded from revenue metrics</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="sl">channel breakdown</div>
+    <div class="g2">
+      <div class="cc">
+        <h3>Nabis — by product category</h3>
+        <div class="leg">
+          <span><span class="ld" style="background:#1a6b3c"></span>Flower jars</span>
+          <span><span class="ld" style="background:#84c9a0"></span>Prerolls</span>
+          <span><span class="ld" style="background:#0e7490"></span>Vapes</span>
+        </div>
+        <div class="cw" style="height:210px"><canvas id="nabisStack" width="514" height="210" style="display: block; box-sizing: border-box; height: 210px; width: 514px;"></canvas></div>
+      </div>
+      <div class="cc">
+        <h3>Nabis vs Distru gross revenue</h3>
+        <div class="leg">
+          <span><span class="ld" style="background:#1a6b3c"></span>Nabis</span>
+          <span><span class="ld" style="background:#84c9a0"></span>Distru (no fee)</span>
+        </div>
+        <div class="cw" style="height:210px"><canvas id="revChan" width="514" height="210" style="display: block; box-sizing: border-box; height: 210px; width: 514px;"></canvas></div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- ══ MONTHLY DETAIL ══ -->
+<div class="view active" id="view-monthly">
+  <section>
+    <div class="sl">click a month to see detail</div>
+    <div class="month-grid" id="monthGrid"><div class="month-btn pre-tenure"><span class="mb-badge mbb-d">Roger</span><div class="mb-label">Jul 2025</div><div class="mb-val">29.8 lbs</div><div class="mb-sub">3,820 units · 1 batch</div></div><div class="month-btn pre-tenure"><span class="mb-badge mbb-d">Roger</span><div class="mb-label">Aug 2025</div><div class="mb-val">35.3 lbs</div><div class="mb-sub">4,520 units · 2 batches</div></div><div class="month-btn pre-tenure"><span class="mb-badge mbb-d">Roger</span><div class="mb-label">Oct 2025</div><div class="mb-val">22.7 lbs</div><div class="mb-sub">2,903 units · 1 batch</div></div><div class="month-btn"><span class="mb-badge mbb-g">Ops start</span><div class="mb-label">Nov 2025</div><div class="mb-val">23.4 lbs</div><div class="mb-sub">4,194 units · 2 batches</div></div><div class="month-btn"><div class="mb-label">Dec 2025</div><div class="mb-val">99.1 lbs</div><div class="mb-sub">6,056 units · 7 batches</div><div class="mb-cplb">$115.32/lb REC</div></div><div class="month-btn"><div class="mb-label">Jan 2026</div><div class="mb-val">119.4 lbs</div><div class="mb-sub">9,645 units · 7 batches</div><div class="mb-cplb">$94.21/lb REC</div></div><div class="month-btn"><div class="mb-label">Feb 2026</div><div class="mb-val">127.6 lbs</div><div class="mb-sub">9,840 units · 9 batches</div><div class="mb-cplb">$77.80/lb REC</div></div><div class="month-btn"><span class="mb-badge mbb-g">Sales start</span><div class="mb-label">Mar 2026</div><div class="mb-val">148.2 lbs</div><div class="mb-sub">8,435 units · 13 batches</div><div class="mb-cplb">$94.52/lb REC</div></div><div class="month-btn"><div class="mb-label">Apr 2026</div><div class="mb-val">150.8 lbs</div><div class="mb-sub">14,571 units · 15 batches</div><div class="mb-cplb">$69.62/lb REC</div></div><div class="month-btn"><div class="mb-label">May 2026</div><div class="mb-val">184.7 lbs</div><div class="mb-sub">11,360 units · 14 batches</div><div class="mb-cplb">$47.94/lb REC</div></div><div class="month-btn"><span class="mb-badge mbb-a">Partial</span><div class="mb-label">Jun 2026</div><div class="mb-val">72.1 lbs</div><div class="mb-sub">14,736 units · 8 batches</div></div></div>
+    <div class="month-detail" id="monthDetail">
+      <div class="md-header">
+        <div class="md-title" id="mdTitle">—</div>
+        <button class="md-close" onclick="closeDetail()">✕ Close</button>
+      </div>
+      <div class="md-stats" id="mdStats"></div>
+      <div id="mdBody"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sl">rec lbs — full history Roger → you</div>
+    <div class="cc">
+      <div class="leg">
+        <span><span class="ld" style="background:#888"></span>Roger (pre-tenure)</span>
+        <span><span class="ld" style="background:#0e7490"></span>Transition</span>
+        <span><span class="ld" style="background:#1a6b3c"></span>Your tenure</span>
+      </div>
+      <div class="cw" style="height:250px"><canvas id="fullLbsChart" height="250" style="display: block; box-sizing: border-box; height: 250px; width: 1082px;" width="1082"></canvas></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sl">total units — all products</div>
+    <div class="cc">
+      <div class="leg">
+        <span><span class="ld" style="background:#1a6b3c"></span>Jars</span>
+        <span><span class="ld" style="background:#84c9a0"></span>Prerolls</span>
+        <span><span class="ld" style="background:#0e7490"></span>Vapes</span>
+      </div>
+      <div class="cw" style="height:250px"><canvas id="fullUnitsChart" height="250" style="display: block; box-sizing: border-box; height: 250px; width: 1082px;" width="1082"></canvas></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sl">monthly output table</div>
+    <div class="tw">
+      <table class="dt">
+        <thead><tr><th>Month</th><th>Rec lbs</th><th>REC $/lb</th><th>Jar units</th><th>Preroll units</th><th>Vape units</th><th>Total units</th><th>Batches</th><th>Net revenue</th></tr></thead>
+        <tbody>
+          <tr><td>Jul 2025 <span class="badge bd">Roger</span></td><td>29.8</td><td>—</td><td>3,820</td><td>—</td><td>—</td><td>3,820</td><td>1</td><td>—</td></tr>
+          <tr><td>Aug 2025 <span class="badge bd">Roger</span></td><td>35.3</td><td>—</td><td>4,520</td><td>—</td><td>—</td><td>4,520</td><td>2</td><td>—</td></tr>
+          <tr><td>Oct 2025 <span class="badge bd">Roger</span></td><td>22.7</td><td>—</td><td>2,903</td><td>—</td><td>—</td><td>2,903</td><td>1</td><td>—</td></tr>
+          <tr><td>Nov 2025 <span class="badge bg">ops start</span></td><td>23.4</td><td>—</td><td>2,993</td><td>1,201</td><td>—</td><td>4,194</td><td>2</td><td>—</td></tr>
+          <tr><td>Dec 2025</td><td>99.1</td><td class="flag">$115.32</td><td>2,411</td><td>3,645</td><td>—</td><td>6,056</td><td>7</td><td>—</td></tr>
+          <tr><td>Jan 2026</td><td>119.4</td><td class="flag">$94.21</td><td>6,156</td><td>3,489</td><td>—</td><td>9,645</td><td>7</td><td>—</td></tr>
+          <tr><td>Feb 2026</td><td>127.6</td><td>$77.80</td><td>7,259</td><td>2,581</td><td>—</td><td>9,840</td><td>9</td><td>$198,647</td></tr>
+          <tr><td>Mar 2026 <span class="badge bg">sales start</span></td><td>148.2</td><td>$94.52</td><td>6,671</td><td>1,764</td><td>—</td><td>8,435</td><td>13</td><td>$177,477</td></tr>
+          <tr><td>Apr 2026</td><td>150.8</td><td>$69.62</td><td>7,237</td><td>6,080</td><td>1,254</td><td>14,571</td><td>15</td><td>$280,761</td></tr>
+          <tr><td>May 2026</td><td class="win">184.7</td><td class="win">$47.94</td><td>8,944</td><td>1,252</td><td>1,164</td><td>11,360</td><td>14</td><td class="win">$283,980</td></tr>
+          <tr><td>Jun 2026 <span class="badge ba">partial</span></td><td>72.1</td><td>—</td><td>12,600</td><td>2,049</td><td>87</td><td>14,736</td><td>8</td><td>$101,883</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<!-- ══ COGS ══ -->
+<div class="view" id="view-cogs">
+
+  <section>
+    <div class="sl">supply costs — from cost analysis sheet</div>
+    <div class="g2" style="margin-bottom:16px">
+      <div class="tw">
+        <table class="dt">
+          <thead><tr><th style="text-align:left">3.5g Jar — cost per unit</th><th>Cost</th></tr></thead>
+          <tbody>
+            <tr><td>Packaging labor</td><td>$1.65</td></tr>
+            <tr><td>Jar label</td><td>$0.06</td></tr>
+            <tr><td>3.5g glass jar</td><td>$0.98</td></tr>
+            <tr><td>Sticker</td><td>$0.20</td></tr>
+            <tr><td>City tax (2% of $27.50)</td><td>$0.55</td></tr>
+            <tr class="tot"><td>Total per unit (excl. flower)</td><td>$3.44</td></tr>
+            <tr><td>Flower (at $7.25/lb basis)</td><td>~$7.25</td></tr>
+            <tr class="tot"><td>Total COGS per unit</td><td class="win">$10.69</td></tr>
+            <tr><td>Sold at $27.50 — net profit/lb</td><td class="win">$2,216</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tw">
+        <table class="dt">
+          <thead><tr><th style="text-align:left">1g Preroll — cost per unit</th><th>Cost</th></tr></thead>
+          <tbody>
+            <tr><td>Joint tube</td><td>$0.07</td></tr>
+            <tr><td>Labor per preroll</td><td>$2.00</td></tr>
+            <tr><td>Glass tip</td><td>$0.25</td></tr>
+            <tr><td>Sticker</td><td>$0.20</td></tr>
+            <tr><td>City tax (2% of $13.75)</td><td>$0.28</td></tr>
+            <tr class="tot"><td>Total per unit (excl. flower)</td><td>$2.80</td></tr>
+            <tr><td>Sold at $13.75 — net profit/lb</td><td class="win">$2,421</td></tr>
+            <tr><td>Sold at $11.00 — net profit/lb</td><td>$1,591</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="tw" style="margin-bottom:16px">
+      <table class="dt">
+        <thead><tr><th>Master case cost</th><th>Cost</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Single preroll 16CT master case</td><td>$0.83</td><td style="text-align:left;color:var(--muted)">per case</td></tr>
+          <tr><td>Flower 16CT master case</td><td>$2.40</td><td style="text-align:left;color:var(--muted)">per case</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="sl">COGS per unit — full build-up all products</div>
+    <div class="tw" style="margin-bottom:20px">
+      <table class="ct">
+        <thead><tr><th>Component</th><th>1.5g Preroll (Nov '25)</th><th>1.5g Preroll (Jun '26)</th><th>3.5g Jar</th><th>.7g 5-pack</th><th>Vape (1g AIO)</th></tr></thead>
+        <tbody>
+          <tr><td>Flower / oil / distillate</td><td>$2.86</td><td>$2.86</td><td>$7.25</td><td>$7.25</td><td>$4.50</td></tr>
+          <tr><td>Packaging materials</td><td>$0.72</td><td class="cwin">$0.32</td><td>$0.98</td><td>$2.03</td><td>$3.14</td></tr>
+          <tr><td>Labor — packaging</td><td>$1.14</td><td class="cwin">$0.71</td><td>$1.65</td><td>$0.50</td><td>— *</td></tr>
+          <tr><td>Labor — labeling</td><td>$0.80</td><td class="cwin">$0.31</td><td>—</td><td>$0.39</td><td>$0.01</td></tr>
+          <tr><td>Labels / stickers</td><td>$0.09</td><td>$0.16</td><td>$0.06</td><td>$0.04</td><td>$0.09</td></tr>
+          <tr><td>Glass tip</td><td>$0.25</td><td>$0.25</td><td>—</td><td>—</td><td>—</td></tr>
+          <tr><td>Joint tube / jar</td><td>$0.07</td><td>$0.07</td><td>$0.06</td><td>—</td><td>—</td></tr>
+          <tr><td>City tax (2%)</td><td>$0.28</td><td>$0.28</td><td>$0.55</td><td>—</td><td>—</td></tr>
+          <tr><td>Testing</td><td>$0.21</td><td>$0.21</td><td>$0.50</td><td>$0.85</td><td>—</td></tr>
+          <tr><td>Filling / extractor fee</td><td>—</td><td>—</td><td>—</td><td>—</td><td>$0.50</td></tr>
+          <tr><td>Nabis distro fee (10%)</td><td>—</td><td>—</td><td>—</td><td>—</td><td>$2.50</td></tr>
+          <tr class="ctot"><td>Total COGS / unit</td><td>$6.42</td><td class="cwin">$5.17 (−19%)</td><td>$11.05</td><td>$11.06</td><td>$10.74</td></tr>
+          <tr><td>Wholesale price / unit</td><td>$13.75</td><td>$13.75</td><td>$27.50</td><td>$22.50</td><td>$25.00</td></tr>
+          <tr class="cmar"><td>Gross margin / unit</td><td>53%</td><td class="cwin">62% ↑</td><td>60%</td><td>51%</td><td>57%</td></tr>
+        </tbody>
+      </table>
+      <p class="fn">* Vapes picked up from manufacturer → sent directly to Nabis. No in-house packaging labor. City tax included in Nabis fee structure.</p>
+    </div>
+    <div class="g2">
+      <div class="cc">
+        <h3>COGS breakdown — 1.5g preroll before vs after</h3>
+        <div class="leg">
+          <span><span class="ld" style="background:#ccc"></span>Nov 2025</span>
+          <span><span class="ld" style="background:#1a6b3c"></span>Jun 2026</span>
+        </div>
+        <div class="cw" style="height:230px"><canvas id="cogsBar" height="0" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" width="0"></canvas></div>
+      </div>
+      <div class="cc">
+        <h3>Gross margin by product — current</h3>
+        <div class="cw" style="height:230px"><canvas id="marginBar" height="0" style="display: block; box-sizing: border-box; height: 0px; width: 0px;" width="0"></canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sl">per-lb economics (from cost analysis)</div>
+    <div class="g4">
+      <div class="sc inv"><div class="lb">Avg cost per lb (flower)</div><div class="vl">$887</div><div class="sb">Input cost basis</div></div>
+      <div class="sc"><div class="lb">Cost per lb packaged (jar)</div><div class="vl">$444</div><div class="sb nt">Incl. all supplies per lb</div></div>
+      <div class="sc"><div class="lb">Net profit per lb @ $27.50</div><div class="vl">$2,216</div><div class="sb up">Jar channel</div></div>
+      <div class="sc"><div class="lb">Net profit per lb @ $13.75</div><div class="vl">$2,421</div><div class="sb up">Preroll channel</div></div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <span>Wizard Trees · Ops &amp; COGS Dashboard</span>
+  <span>Revenue: Sales By Week · Cost/lb: Gianni's tracker · Supply costs: cost analysis sheet · Through Jun 25, 2026</span>
+</footer>
+
+<script>
+const G='#1a6b3c',GL='#84c9a0',TL='#0e7490',AM='#e8a87c',GR='#aaa',tc='#999',gc='#ece9e4';
+const baseOpts=(yfmt,mn,mx)=>({responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{color:tc,font:{size:11}},grid:{display:false},border:{display:false}},y:{ticks:{color:tc,font:{size:11},callback:yfmt},grid:{color:gc},border:{display:false},...(mn!=null?{min:mn}:{}),...(mx!=null?{max:mx}:{})}}});
+
+const m5=['Feb','Mar','Apr','May','Jun'];
+const m6=['Dec','Jan','Feb','Mar','Apr','May'];
+const mFull=['Jul\n\'25','Aug','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun'];
+
+// MONTH DATA
+const MONTHS={
+  '2025-07':{label:'Jul 2025',tenure:false,lbs_rec:29.84,jars:3820,preroll_units:0,vape_units:0,batches:1,rec_cplb:null,void_cplb:null,net_rev:null,nabis_gross:null,distru_gross:null,note:'Roger era — no labor tracking',drops:[{name:'Nabis Drop (Jul 11)',strains:['Limelight','Black Magic','Zoza','Zangbanger','Jungle Juice'],jars:3820,lbs:29.84}]},
+  '2025-08':{label:'Aug 2025',tenure:false,lbs_rec:35.31,jars:4520,preroll_units:0,vape_units:0,batches:2,rec_cplb:null,void_cplb:null,net_rev:null,nabis_gross:null,distru_gross:null,note:'Roger era — no labor tracking',drops:[{name:'Aug 12 Drop',strains:['Black Magic','Blue Magic','Orange Magic'],jars:1988,lbs:15.53},{name:'Late Aug Drop',strains:['Wizzy','Zangbanger','Dark Matter','New Yorker','Black Magic'],jars:2532,lbs:19.78}]},
+  '2025-10':{label:'Oct 2025',tenure:false,lbs_rec:22.68,jars:2903,preroll_units:0,vape_units:0,batches:1,rec_cplb:null,void_cplb:null,net_rev:null,nabis_gross:null,distru_gross:null,note:'Roger era — no labor tracking',drops:[{name:'Oct Drop',strains:['Gas Gimlet','Orange Magic','Black Magic','New Yorker','Wizard OG'],jars:2903,lbs:22.68}]},
+  '2025-11':{label:'Nov 2025',tenure:true,milestone:'ops start',lbs_rec:23.38,jars:2993,preroll_units:1201,vape_units:0,batches:2,rec_cplb:null,void_cplb:null,net_rev:null,nabis_gross:null,distru_gross:null,note:'Took over ops — no labor tracking yet',drops:[{name:'Nov Drop',strains:['Dark Matter','Zangbanger','Black Light','Zoza','Limelight'],jars:2993,lbs:23.38}]},
+  '2025-12':{label:'Dec 2025',tenure:true,lbs_rec:99.1,jars:2411,preroll_units:3645,vape_units:0,batches:7,rec_cplb:115.32,rec_labor:11427.89,void_cplb:110.89,void_labor:4158.22,net_rev:null,nabis_gross:null,distru_gross:null},
+  '2026-01':{label:'Jan 2026',tenure:true,lbs_rec:119.41,jars:6156,preroll_units:3489,vape_units:0,batches:7,rec_cplb:94.21,rec_labor:11249.41,void_cplb:82.38,void_labor:3820.47,net_rev:null,nabis_gross:null,distru_gross:null},
+  '2026-02':{label:'Feb 2026',tenure:true,lbs_rec:127.57,jars:7259,preroll_units:2581,vape_units:0,batches:9,rec_cplb:77.80,rec_labor:9925,void_cplb:69.46,void_labor:479.80,net_rev:198647,nabis_gross:110708,distru_gross:99010},
+  '2026-03':{label:'Mar 2026',tenure:true,milestone:'sales start',lbs_rec:148.22,jars:6671,preroll_units:1764,vape_units:0,batches:13,rec_cplb:94.52,rec_labor:14010.20,void_cplb:105.68,void_labor:730,net_rev:177477,nabis_gross:76787,distru_gross:108369},
+  '2026-04':{label:'Apr 2026',tenure:true,lbs_rec:150.75,jars:7237,preroll_units:6080,vape_units:1254,batches:15,rec_cplb:69.62,rec_labor:10495.40,void_cplb:67.92,void_labor:603.20,net_rev:280761,nabis_gross:146277,distru_gross:149111},
+  '2026-05':{label:'May 2026',tenure:true,lbs_rec:184.73,jars:8944,preroll_units:1252,vape_units:1164,batches:14,rec_cplb:47.94,rec_labor:8856.80,void_cplb:46.17,void_labor:410,net_rev:283980,nabis_gross:180428,distru_gross:121594},
+  '2026-06':{label:'Jun 2026',tenure:true,partial:true,lbs_rec:72.1,jars:12600,preroll_units:2049,vape_units:87,batches:8,rec_cplb:null,void_cplb:null,net_rev:101883,nabis_gross:27628,distru_gross:77018},
+};
+const MONTH_ORDER=['2025-07','2025-08','2025-10','2025-11','2025-12','2026-01','2026-02','2026-03','2026-04','2026-05','2026-06'];
+
+function showView(id,tab){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('view-'+id).classList.add('active');
+  if(tab)tab.classList.add('active');
+}
+
+function buildMonthGrid(){
+  const grid=document.getElementById('monthGrid');
+  MONTH_ORDER.forEach((key,i)=>{
+    const m=MONTHS[key];
+    const totalUnits=m.jars+m.preroll_units+m.vape_units;
+    const btn=document.createElement('div');
+    btn.className='month-btn'+(m.tenure?'':' pre-tenure');
+    btn.onclick=()=>showMonthDetail(key,i);
+    let badge='';
+    if(m.milestone==='ops start') badge='<span class="mb-badge mbb-g">Ops start</span>';
+    else if(m.milestone==='sales start') badge='<span class="mb-badge mbb-g">Sales start</span>';
+    else if(!m.tenure) badge='<span class="mb-badge mbb-d">Roger</span>';
+    else if(m.partial) badge='<span class="mb-badge mbb-a">Partial</span>';
+    const cplbHtml=m.rec_cplb?`<div class="mb-cplb">$${m.rec_cplb.toFixed(2)}/lb REC</div>`:'';
+    btn.innerHTML=`${badge}<div class="mb-label">${m.label}</div><div class="mb-val">${m.lbs_rec.toFixed(1)} lbs</div><div class="mb-sub">${totalUnits.toLocaleString()} units · ${m.batches} batch${m.batches!==1?'es':''}</div>${cplbHtml}`;
+    grid.appendChild(btn);
+  });
+}
+
+function showMonthDetail(key,idx){
+  const m=MONTHS[key];
+  const totalUnits=m.jars+m.preroll_units+m.vape_units;
+  const totalOps=(m.rec_labor||0)+(m.void_labor||0);
+  const laborPct=totalOps>0&&m.net_rev>0?(totalOps/m.net_rev*100).toFixed(1):null;
+  document.querySelectorAll('.month-btn').forEach((b,i)=>{b.classList.toggle('active-month',i===idx)});
+  document.getElementById('mdTitle').textContent=m.label;
+
+  const fN=v=>v!=null?'$'+Math.round(v).toLocaleString():'—';
+  document.getElementById('mdStats').innerHTML=`
+    <div class="md-stat inv"><div class="ms-l">REC lbs packaged</div><div class="ms-v">${m.lbs_rec.toFixed(1)}</div><div class="ms-s">Rec orders only · no void</div></div>
+    <div class="md-stat"><div class="ms-l">Total units</div><div class="ms-v">${totalUnits.toLocaleString()}</div><div class="ms-s">Jars ${m.jars.toLocaleString()} · PR ${m.preroll_units.toLocaleString()} · Vape ${m.vape_units}</div></div>
+    <div class="md-stat"><div class="ms-l">REC cost per lb</div><div class="ms-v">${m.rec_cplb?'$'+m.rec_cplb.toFixed(2):'—'}</div><div class="ms-s">${m.rec_cplb?'Gianni\'s tracker':'No data this month'}</div></div>
+    <div class="md-stat"><div class="ms-l">Labor % of revenue</div><div class="ms-v">${laborPct?laborPct+'%':'—'}</div><div class="ms-s">${m.net_rev?'Net rev: '+fN(m.net_rev):'No revenue data'}</div></div>
+  `;
+
+  let body='';
+  if(m.rec_cplb){
+    body+=`<div class="md-section">Cost per lb — REC vs VOID</div>
+    <div class="cplb-compare">
+      <div class="cplb-box cplb-rec"><div class="cb-label">REC cost / lb</div><div class="cb-val">$${m.rec_cplb.toFixed(2)}</div><div class="cb-sub">${fN(m.rec_labor)} labor · ${m.lbs_rec.toFixed(1)} lbs<br>Nabis + Distru orders</div></div>
+      <div class="cplb-box cplb-void"><div class="cb-label">VOID cost / lb</div><div class="cb-val">$${m.void_cplb.toFixed(2)}</div><div class="cb-sub">${fN(m.void_labor)} labor · portal/internal<br>Not tracked in revenue</div></div>
+    </div>`;
+  }
+  if(m.nabis_gross){
+    body+=`<div class="md-section">Revenue</div>
+    <div class="md-row"><span class="mr-label">Nabis gross</span><span class="mr-sub">After −10% fee: ${fN(m.nabis_gross*0.9)}</span><span class="mr-val">${fN(m.nabis_gross)}</span></div>
+    <div class="md-row"><span class="mr-label">Distru gross</span><span class="mr-sub">Full amount kept</span><span class="mr-val">${fN(m.distru_gross)}</span></div>
+    <div class="md-row"><span class="mr-label">Net revenue</span><span class="mr-sub">After Nabis fee</span><span class="mr-val">${fN(m.net_rev)}</span></div>`;
+  }
+  if(m.drops&&m.drops.length){
+    body+=`<div class="md-section">Packaging runs</div>`;
+    m.drops.forEach(d=>{body+=`<div class="md-row"><span class="mr-label">${d.name}</span><span class="mr-sub">${d.strains.join(', ')}</span><span class="mr-val">${d.jars.toLocaleString()} jars · ${d.lbs.toFixed(2)} lbs</span></div>`;});
+  }
+  if(!m.rec_cplb){body+=`<div class="no-labor">⚠️ ${m.note||'No labor cost data — cost per lb not available for this month.'}</div>`;}
+  document.getElementById('mdBody').innerHTML=body;
+  const detail=document.getElementById('monthDetail');
+  detail.classList.add('show');
+  detail.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function closeDetail(){
+  document.getElementById('monthDetail').classList.remove('show');
+  document.querySelectorAll('.month-btn').forEach(b=>b.classList.remove('active-month'));
+}
+
+// ── CHARTS ──
+// REC vs VOID cost/lb
+new Chart(document.getElementById('cplbGianni'),{type:'line',data:{labels:m6,datasets:[
+  {label:'REC',data:[115.32,94.21,77.80,94.52,69.62,47.94],borderColor:G,backgroundColor:'rgba(26,107,60,0.07)',fill:true,tension:0.3,pointBackgroundColor:[AM,AM,G,AM,G,G],pointRadius:6},
+  {label:'VOID',data:[110.89,82.38,69.46,105.68,67.92,46.17],borderColor:GL,borderDash:[4,3],tension:0.3,pointRadius:4,pointBackgroundColor:GL},
+]},options:baseOpts(v=>'$'+v,30,130)});
+
+// REC lbs vs labor cost
+new Chart(document.getElementById('lbsVsLabor'),{type:'bar',data:{labels:m6,datasets:[
+  {label:'REC lbs',data:[99.1,119.41,127.57,148.22,150.75,184.73],backgroundColor:G,borderRadius:3,yAxisID:'y'},
+  {label:'Labor $',data:[11428,11249,9925,14010,10495,8857],backgroundColor:AM,borderRadius:3,yAxisID:'y2'},
+]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{
+  x:{ticks:{color:tc,font:{size:11}},grid:{display:false},border:{display:false}},
+  y:{ticks:{color:tc,font:{size:11},callback:v=>v+'lb'},grid:{color:gc},border:{display:false},position:'left'},
+  y2:{ticks:{color:tc,font:{size:11},callback:v=>'$'+(v/1000).toFixed(0)+'K'},grid:{display:false},border:{display:false},position:'right'},
+}}});
+
+// Nabis stack
+new Chart(document.getElementById('nabisStack'),{type:'bar',data:{labels:m5,datasets:[
+  {label:'Flower',data:[89390,67515,91249,130693,84092],backgroundColor:G,borderRadius:2,stack:'s'},
+  {label:'Preroll',data:[21319,19658,22632,29970,22885],backgroundColor:GL,borderRadius:2,stack:'s'},
+  {label:'Vape',data:[0,0,31350,29100,2175],backgroundColor:TL,borderRadius:2,stack:'s'},
+]},options:baseOpts(v=>'$'+(v/1000).toFixed(0)+'K',0,null)});
+
+// Rev channel
+new Chart(document.getElementById('revChan'),{type:'bar',data:{labels:m5,datasets:[
+  {label:'Nabis',data:[110708,76787,146277,180428,27628],backgroundColor:G,borderRadius:2,stack:'s'},
+  {label:'Distru',data:[99010,108369,149111,121594,77018],backgroundColor:GL,borderRadius:2,stack:'s'},
+]},options:baseOpts(v=>'$'+(v/1000).toFixed(0)+'K',0,null)});
+
+// Full lbs history
+new Chart(document.getElementById('fullLbsChart'),{type:'bar',data:{labels:mFull,datasets:[{
+  data:[29.84,35.31,22.68,23.38,99.1,119.41,127.57,148.22,150.75,184.73,72.1],
+  backgroundColor:['#888','#888','#888',TL,G,G,G,G,G,G,G],borderRadius:3
+}]},options:baseOpts(v=>v+'lb',0,null)});
+
+// Full units
+new Chart(document.getElementById('fullUnitsChart'),{type:'bar',data:{labels:mFull,datasets:[
+  {label:'Jars',data:[3820,4520,2903,2993,2411,6156,7259,6671,7237,8944,12600],backgroundColor:G,borderRadius:2,stack:'s'},
+  {label:'Prerolls',data:[0,0,0,1201,3645,3489,2581,1764,6080,1252,2049],backgroundColor:GL,borderRadius:2,stack:'s'},
+  {label:'Vapes',data:[0,0,0,0,0,0,0,0,1254,1164,87],backgroundColor:TL,borderRadius:2,stack:'s'},
+]},options:baseOpts(v=>v>=1000?(v/1000).toFixed(0)+'K':v,0,null)});
+
+// COGS comparison bar
+new Chart(document.getElementById('cogsBar'),{type:'bar',data:{
+  labels:['Flower','Pkg matl','Labor pkg','Labor label','Glass tip','Tube/jar','City tax','Testing'],
+  datasets:[
+    {label:'Nov 2025',data:[2.86,0.72,1.14,0.80,0.25,0.07,0.28,0.21],backgroundColor:GR,borderRadius:2},
+    {label:'Jun 2026',data:[2.86,0.32,0.71,0.31,0.25,0.07,0.28,0.21],backgroundColor:G,borderRadius:2},
+  ]
+},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{
+  x:{ticks:{color:tc,font:{size:10}},grid:{display:false},border:{display:false}},
+  y:{ticks:{color:tc,font:{size:11},callback:v=>'$'+v.toFixed(2)},grid:{color:gc},border:{display:false},max:3.5}
+}}});
+
+// Margin bar
+new Chart(document.getElementById('marginBar'),{type:'bar',data:{
+  labels:['1.5g PR\n(Nov\'25)','1.5g PR\n(Jun\'26)','3.5g Jar','.7g 5pk','Vape'],
+  datasets:[{data:[53,62,60,51,57],backgroundColor:[GR,G,G,GL,TL],borderRadius:3}]
+},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{
+  x:{ticks:{color:tc,font:{size:11}},grid:{display:false},border:{display:false}},
+  y:{ticks:{color:tc,font:{size:11},callback:v=>v+'%'},grid:{color:gc},border:{display:false},max:80}
+}}});
+
+buildMonthGrid();
+</script>
+
+
+</body></html>
